@@ -26,7 +26,7 @@ resource "google_compute_firewall" "allow_ssh" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22"]
+    ports    = ["22", "80"]
   }
 
   source_ranges = ["0.0.0.0/0"]  
@@ -77,7 +77,7 @@ resource "google_compute_instance_template" "instance_template" {
     cat <<EOF > /var/www/html/index.html
     <html>
       <body>
-        <h1>Kartaca Projesi Websitesine Hoşgeldiniz!</h1>
+        <h1>Kartaca Projesi Websitesine Hosgeldiniz!</h1>
       </body>
     </html>
   EOF
