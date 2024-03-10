@@ -20,7 +20,18 @@ resource "google_compute_subnetwork" "subnet" {
   network       = google_compute_network.vpc_network.self_link
 }
 
-# 3. Cloud Router and NAT Gateway
+resource "google_compute_firewall" "allow_ssh" {
+  name    = "allow-ssh"
+  network = google_compute_network.vpc_network.self_link
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]  
+}
+
 resource "google_compute_router" "router" {
   name    = "my-router"
   network = google_compute_network.vpc_network.self_link
@@ -33,7 +44,6 @@ resource "google_compute_router_nat" "nat" {
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
-# 4. Instance template
 resource "google_compute_instance_template" "instance_template" {
   name         = "my-instance-template"
   machine_type = "e2-micro"
@@ -44,6 +54,11 @@ resource "google_compute_instance_template" "instance_template" {
   
   disk {
     source_image      = "debian-cloud/debian-11"
+  }
+
+  service_account {
+    email  = "kartaca-project@kartaca-416714.iam.gserviceaccount.com"
+    scopes = ["cloud-platform"]
   }
 
   network_interface {
