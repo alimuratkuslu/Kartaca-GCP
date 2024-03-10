@@ -211,3 +211,24 @@ resource "google_sql_database_instance" "my_postgres_instance" {
     }
   }
 }
+
+resource "google_storage_bucket" "terraform_state_bucket" {
+  name          = "kartaca-gcp-bucket"
+  location      = "europe-west1"
+  versioning {
+    enabled = true
+  }
+  uniform_bucket_level_access = true
+}
+
+resource "google_storage_bucket_object" "terraform_state" {
+  name   = "terraform.tfstate"
+  bucket = google_storage_bucket.terraform_state_bucket.name
+  source = "./terraform.tfstate" 
+}
+
+resource "google_storage_bucket_object" "terraform_state_backup" {
+  name   = "terraform.tfstate.backup"
+  bucket = google_storage_bucket.terraform_state_bucket.name
+  source = "./terraform.tfstate.backup"
+}
